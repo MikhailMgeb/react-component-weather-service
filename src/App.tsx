@@ -1,26 +1,42 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
+
+import { cnApp } from './App.classname';
+import { WeatherService } from './components/WeatherService/WeatherService';
+import { fetchIP } from './WeatherUtils';
+
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export type TimeData = {
+  time: number;
+  minutes: number;
+  city: string;
 }
 
-export default App;
+const cities = ['Москва', 'Санкт Петербург']
+
+const App = () => {
+  const [data, setData] = useState<TimeData>({ time: 0, minutes: 0, city: '', });
+
+  useEffect(() => {
+    return fetchIP(setData);
+  }, [])
+
+  if (!cities.includes(data.city) && data.city) {
+    cities.push(data.city);
+  }
+
+  return (
+    <div className={cnApp('App')} data-hour={data.time}>
+      {
+        cities.map((city, index) =>
+          <WeatherService key={index} city={city} />
+        )
+      }
+      <div className="time">
+        Последнее обновление {data.time}:{data.minutes}
+      </div>
+    </div>
+  )
+}
+
+export { App };

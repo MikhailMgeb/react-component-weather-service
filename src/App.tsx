@@ -14,17 +14,17 @@ export type City = {
 }
 
 const App = () => {
-  const [city, setCity] = useState<City[]>([]);
+  const [dataCity, setDataCity] = useState<City | null>(null);
 
-  const handleAddCity = (city: City[]) => {
-    setCity(city);
+  const handleAddCity = (city: City | null) => {
+    setDataCity(city);
   }
 
-  console.log(city);
+  console.log(dataCity);
 
   return (
     <div className={cnApp()}>
-      <CitySuggest onAddCity={handleAddCity} city={city[0]?.name} />
+      <CitySuggest onAddCity={handleAddCity} city={dataCity?.name} />
       <WeatherService />
     </div>
   )

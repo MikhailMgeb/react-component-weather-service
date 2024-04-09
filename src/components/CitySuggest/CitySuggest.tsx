@@ -7,11 +7,12 @@ import IconNav from './../image/navigate-svgrepo-com.svg';
 import './CitySuggest.css';
 
 type CitySuggestProps = {
-    city: string;
-    onAddCity: (city: City[]) => void;
+    city: string | undefined;
+    onAddCity: (city: City | null) => void;
 }
 
-let textTitle;
+let textTitle: string;
+let myCurrentPosition: City;
 
 const CitySuggest: FC<CitySuggestProps> = ({ onAddCity, city }) => {
     const [text, setText] = useState('');
@@ -20,19 +21,20 @@ const CitySuggest: FC<CitySuggestProps> = ({ onAddCity, city }) => {
         setText(event.target.value);
     }
 
-    const handleGetMyLocation = () => {
+    const handleGetCurrentPosition = () => {
         navigator.geolocation.getCurrentPosition(async (position) => {
             const { latitude, longitude } = position.coords;
             const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=ENG`);
 
             const { city } = await res.json();
-            onAddCity([{ latitude, longitude, name: city }]);
+            myCurrentPosition = { latitude, longitude, name: city };
+            onAddCity(myCurrentPosition);
         },);
     }
 
     useEffect(() => {
         if (text.length === 0) {
-            onAddCity([]);
+            onAddCity(null);
             return;
         }
 
@@ -41,8 +43,9 @@ const CitySuggest: FC<CitySuggestProps> = ({ onAddCity, city }) => {
         })
             .then(response => response.json())
             .then((newCity: City[]) => {
-                onAddCity(newCity);
+                onAddCity(newCity[0]);
             })
+
     }, [text]);
 
     if (text.length === 0) {
@@ -53,7 +56,7 @@ const CitySuggest: FC<CitySuggestProps> = ({ onAddCity, city }) => {
 
     return (
         <div className={cnCitySuggest()}>
-            <button className={cnCitySuggest('Button')} onClick={handleGetMyLocation}>
+            <button className={cnCitySuggest('Button')} onClick={handleGetCurrentPosition}>
                 <img className={cnCitySuggest('Icon')} src={IconNav} alt="nav" />
             </button>
             <input className={cnCitySuggest('Input')} value={text} onChange={handleChangeText} />

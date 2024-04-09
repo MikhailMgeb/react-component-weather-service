@@ -5,7 +5,6 @@ import { cnWeatherService } from './WeatherService.classname';
 import './WeatherService.css';
 
 const WeatherService = () => {
-
     
     return (
         <div className={cnWeatherService('Widget')}>

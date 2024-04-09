@@ -1,40 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { cnApp } from './App.classname';
 import { WeatherService } from './components/WeatherService/WeatherService';
-import { fetchIP } from './WeatherUtils';
+import { CitySuggest } from './components/CitySuggest/CitySuggest';
 
 import './App.css';
 
-export type TimeData = {
-  time: number;
-  minutes: number;
-  city: string;
+export type City = {
+  'name': string;
+  'latitude': number;
+  'longitude': number;
+  'country': string;
+  'population': number;
+  'is_capital': boolean
 }
 
-const cities = ['Москва', 'Санкт Петербург']
-
 const App = () => {
-  const [data, setData] = useState<TimeData>({ time: 0, minutes: 0, city: '', });
+  const [city, setCity] = useState<City[]>([]);
 
-  useEffect(() => {
-    return fetchIP(setData);
-  }, [])
-
-  if (!cities.includes(data.city) && data.city) {
-    cities.push(data.city);
+  const handleAddCity = (city: City[]) => {
+    setCity(city);
   }
 
   return (
-    <div className={cnApp('App')} data-hour={data.time}>
-      {
-        cities.map((city, index) =>
-          <WeatherService key={index} city={city} />
-        )
-      }
-      <div className="time">
-        Последнее обновление {data.time}:{data.minutes}
-      </div>
+    <div className={cnApp('App')}>
+      <CitySuggest onAddCity={handleAddCity} city={city[0]?.name} />
+      <WeatherService />
     </div>
   )
 }

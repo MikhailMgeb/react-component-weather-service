@@ -7,12 +7,10 @@ import { CitySuggest } from './components/CitySuggest/CitySuggest';
 import './App.css';
 
 export type City = {
-  'name': string;
-  'latitude': number;
-  'longitude': number;
-  'country': string;
-  'population': number;
-  'is_capital': boolean
+  name: string;
+  latitude: number;
+  longitude: number;
+  country?: string;
 }
 
 const App = () => {
@@ -22,8 +20,10 @@ const App = () => {
     setCity(city);
   }
 
+  console.log(city);
+
   return (
-    <div className={cnApp('App')}>
+    <div className={cnApp()}>
       <CitySuggest onAddCity={handleAddCity} city={city[0]?.name} />
       <WeatherService />
     </div>

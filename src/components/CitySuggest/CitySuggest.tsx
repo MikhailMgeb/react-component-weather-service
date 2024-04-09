@@ -2,6 +2,7 @@ import React, { ChangeEvent, FC, useEffect, useState } from 'react';
 
 import { cnCitySuggest } from './CitySuggest.classname';
 import type { City } from '../../App';
+import IconNav from './../image/navigate-svgrepo-com.svg';
 
 import './CitySuggest.css';
 
@@ -17,6 +18,16 @@ const CitySuggest: FC<CitySuggestProps> = ({ onAddCity, city }) => {
 
     const handleChangeText = (event: ChangeEvent<HTMLInputElement>) => {
         setText(event.target.value);
+    }
+
+    const handleGetMyLocation = () => {
+        navigator.geolocation.getCurrentPosition(async (position) => {
+            const { latitude, longitude } = position.coords;
+            const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=ENG`);
+
+            const { city } = await res.json();
+            onAddCity([{ latitude, longitude, name: city }]);
+        },);
     }
 
     useEffect(() => {
@@ -42,6 +53,9 @@ const CitySuggest: FC<CitySuggestProps> = ({ onAddCity, city }) => {
 
     return (
         <div className={cnCitySuggest()}>
+            <button className={cnCitySuggest('Button')} onClick={handleGetMyLocation}>
+                <img className={cnCitySuggest('Icon')} src={IconNav} alt="nav" />
+            </button>
             <input className={cnCitySuggest('Input')} value={text} onChange={handleChangeText} />
             {city === undefined ? <p className={cnCitySuggest('Title')}>{textTitle}</p> : <p className={cnCitySuggest('Title')}>{city}</p>}
         </div>

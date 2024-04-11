@@ -14,12 +14,12 @@ export type City = {
 }
 
 const App = () => {
-  const [dataCity, setDataCity] = useState<City | null>(null);
+  const [city, setCity] = useState<City | null>(null);
 
   useEffect(() => {
     if (localStorage.getItem('city') !== null) {
       const storageCity = localStorage.getItem('city');
-      setDataCity(JSON.parse(storageCity || ''))
+      setCity(JSON.parse(storageCity || ''))
     }
   }, [])
 
@@ -29,13 +29,13 @@ const App = () => {
       localStorage.setItem('city', JSON.stringify(city));
     }
 
-    setDataCity(city);
+    setCity(city);
   }
 
   return (
     <div className={cnApp()}>
-      <CitySuggest onAddCity={handleAddCity} city={dataCity?.name} />
-      <WeatherService />
+      <CitySuggest onAddCity={handleAddCity} city={city?.name} />
+      <WeatherService city={city} />
     </div>
   )
 }

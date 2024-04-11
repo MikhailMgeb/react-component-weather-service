@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, useEffect, useState } from 'react';
+import React, { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
 
 import { cnCitySuggest } from './CitySuggest.classname';
 import type { City } from '../../App';
@@ -9,17 +9,20 @@ import './CitySuggest.css';
 type CitySuggestProps = {
     city: string | undefined;
     onAddCity: (city: City | null) => void;
-}
+};
 
 let textTitle: string;
 let myCurrentPosition: City;
 
 const CitySuggest: FC<CitySuggestProps> = ({ onAddCity, city }) => {
-    const [text, setText] = useState('');
+    const [search, setSearch] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [lastSearch, setLastSearch] = useState('');
+    const timerRef = useRef<NodeJS.Timeout | null>(null);
 
     const handleChangeText = (event: ChangeEvent<HTMLInputElement>) => {
-        setText(event.target.value);
-    }
+        setSearch(event.target.value);
+    };
 
     const handleGetCurrentPosition = () => {
         navigator.geolocation.getCurrentPosition(async (position) => {
@@ -30,25 +33,50 @@ const CitySuggest: FC<CitySuggestProps> = ({ onAddCity, city }) => {
             myCurrentPosition = { latitude, longitude, name: city };
             onAddCity(myCurrentPosition);
         },);
-    }
+    };
 
     useEffect(() => {
-        if (text.length === 0) {
-            onAddCity(null);
+        if (loading) {
             return;
         }
 
-        fetch(`https://api.api-ninjas.com/v1/city?name=${text}`, {
-            headers: { 'X-Api-Key': 'vmehBHqcLJubIXr/Hzr/sg==aswLFRdHvtsWATlz' },
-        })
-            .then(response => response.json())
-            .then((newCity: City[]) => {
-                onAddCity(newCity[0]);
+        if (search === '') {
+            onAddCity(null);
+            setLastSearch('');
+            setLoading(false);
+            return;
+        }
+
+        if (lastSearch === search) {
+            return;
+        }
+
+        setSearch(search);
+
+        if (timerRef.current) {
+            clearTimeout(timerRef.current);
+        }
+
+        timerRef.current = setTimeout(() => {
+            setLoading(true);
+
+            fetch(`https://api.api-ninjas.com/v1/city?name=${search}`, {
+                headers: { 'X-Api-Key': 'm1n74jUjViEVpnrpDeGNwA==lntdcBrfhcI2p5x7' },
             })
+                .then(response => response.json())
+                .then((newCity: City[]) => {
+                    onAddCity(newCity[0]);
+                })
+                .finally(() => {
+                    setLoading(false);
+                    setLastSearch(search)
+                })
+        }, 400)
 
-    }, [text]);
 
-    if (text.length === 0) {
+    }, [lastSearch, loading, search]);
+
+    if (search.length === 0) {
         textTitle = 'Введите город';
     } else {
         textTitle = 'Загружаем...';
@@ -59,10 +87,13 @@ const CitySuggest: FC<CitySuggestProps> = ({ onAddCity, city }) => {
             <button className={cnCitySuggest('Button')} onClick={handleGetCurrentPosition}>
                 <img className={cnCitySuggest('Icon')} src={IconNav} alt="nav" />
             </button>
-            <input className={cnCitySuggest('Input')} value={text} onChange={handleChangeText} />
+            <input className={cnCitySuggest('Input')} value={search} onChange={handleChangeText} />
             {city === undefined ? <p className={cnCitySuggest('Title')}>{textTitle}</p> : <p className={cnCitySuggest('Title')}>{city}</p>}
         </div>
     );
 }
 
 export { CitySuggest };
+
+// m1n74jUjViEVpnrpDeGNwA==lntdcBrfhcI2p5x7 
+// vmehBHqcLJubIXr/Hzr/sg==aswLFRdHvtsWATlz мой

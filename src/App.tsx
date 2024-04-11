@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { cnApp } from './App.classname';
 import { WeatherService } from './components/WeatherService/WeatherService';
@@ -16,11 +16,21 @@ export type City = {
 const App = () => {
   const [dataCity, setDataCity] = useState<City | null>(null);
 
+  useEffect(() => {
+    if (localStorage.getItem('city') !== null) {
+      const storageCity = localStorage.getItem('city');
+      setDataCity(JSON.parse(storageCity || ''))
+    }
+  }, [])
+
+
   const handleAddCity = (city: City | null) => {
+    if (city !== null) {
+      localStorage.setItem('city', JSON.stringify(city));
+    }
+
     setDataCity(city);
   }
-
-  console.log(dataCity);
 
   return (
     <div className={cnApp()}>

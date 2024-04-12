@@ -69,7 +69,7 @@ const CitySuggest: FC<CitySuggestProps> = ({ onAddCity, city }) => {
                 })
                 .finally(() => {
                     setLoading(false);
-                    setLastSearch(search)
+                    setLastSearch(search);
                 })
         }, 400)
 
@@ -94,6 +94,3 @@ const CitySuggest: FC<CitySuggestProps> = ({ onAddCity, city }) => {
 }
 
 export { CitySuggest };
-
-// m1n74jUjViEVpnrpDeGNwA==lntdcBrfhcI2p5x7 
-// vmehBHqcLJubIXr/Hzr/sg==aswLFRdHvtsWATlz мой

@@ -1,12 +1,12 @@
 import React, { FC, useEffect, useState } from 'react';
 
 import { cnWeatherService } from './WeatherService.classname';
-import { Weather, WeatherFetch, WeatherServiceProps } from './types';
+import { Weather, WeatherFetch, WeatherServiceProps } from '../../types';
 
 import './WeatherService.css';
 
 const getCelsius = (kelvinValue: number): number => {
-    return kelvinValue - 273.15;
+    return Math.round(kelvinValue - 273.15);
 }
 
 const WeatherService: FC<WeatherServiceProps> = ({ city }) => {
@@ -28,18 +28,20 @@ const WeatherService: FC<WeatherServiceProps> = ({ city }) => {
             .then((data: WeatherFetch) => {
                 setlastCity(city.name)
                 setWeather({
-                    temperature: data.main.temp,
+                    temperature: getCelsius(data.main.temp),
                     humidity: data.main.humidity,
                     wind: data.wind.speed,
                 })
             })
     }, [city])
 
-    console.log(weather);
-
     return (
-        <div className={cnWeatherService('')}>
-
+        <div className={cnWeatherService()}>
+            {weather ? <>
+                <p>Темапература{' ' + weather?.temperature} </p>
+                <p>Влажность {' ' + weather?.humidity + ' '}%</p>
+                <p>Скорость ветра{' ' + weather?.wind + ' '}м/с</p></> : null
+            }
         </div>
     );
 }

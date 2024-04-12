@@ -1,1 +1,9 @@
-
+.WeatherService {
+    width: 305px;
+    background-color: #018ee1;
+    border-radius: 8px;
+    padding: 28px 30px;
+    color: #f0f8ff;
+    position: relative;
+    font-size: 24px;
+}

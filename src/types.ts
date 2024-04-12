@@ -1,4 +1,4 @@
-import { City } from '../../App';
+import { City } from './App';
 
 export type WeatherServiceProps = {
     city: City | null;

@@ -19,14 +19,14 @@ const App = () => {
   useEffect(() => {
     if (localStorage.getItem('city') !== null) {
       const storageCity = localStorage.getItem('city');
-      setCity(JSON.parse(storageCity || ''))
+      setCity(JSON.parse(storageCity || ' '))
     }
   }, [])
 
 
   const handleAddCity = (city: City | null) => {
     if (city !== null) {
-      localStorage.setItem('city', JSON.stringify(city));
+      localStorage.setItem('city', JSON.stringify(city || ' '));
     }
 
     setCity(city);
@@ -35,7 +35,7 @@ const App = () => {
   return (
     <div className={cnApp()}>
       <CitySuggest onAddCity={handleAddCity} city={city?.name} />
-      <WeatherService city={city} />
+      {city ? <WeatherService city={city} /> : null}
     </div>
   )
 }
